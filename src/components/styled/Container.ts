@@ -8,6 +8,7 @@ export const Container = styled("div", {
     flexDirection: "column",
     height: "100%",
     position: "relative",
+    // paddingBottom: "100px",
 
     "@lg": {
         maxWidth: "750px",

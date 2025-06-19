@@ -1,6 +1,8 @@
 import { styled } from "../../stitches.config";
+import { NavLink, Link } from "react-router-dom";
 import { Container } from "./styled/Container";
 
+// STYLES
 const StyledHeader = styled("div", {
     display: "flex",
     justifyContent: "space-between",
@@ -27,23 +29,39 @@ const StyledHeader = styled("div", {
     ".button:nth-child(1)": {
         borderRightWidth: 0,
     },
+
+    ".active": {
+        backgroundColor: "$accent",
+        color: "black",
+    },
 });
 
+// MARKUP
 const Header = () => {
     return (
-        <>
-            <Container>
-                <StyledHeader>
-                    <div className="column">
-                        <h1 className="heading">LangTutor</h1>
-                    </div>
-                    <div className="column">
-                        <button className="button">Add Word</button>
-                        <button className="button">Practise</button>
-                    </div>
-                </StyledHeader>
-            </Container>
-        </>
+        <Container data-name="Header" css={{ height: "initial" }}>
+            <StyledHeader>
+                <div className="column">
+                    {/* LOGO */}
+                    <Link to="/" className="heading">
+                        LangTutor
+                    </Link>
+                </div>
+
+                <div className="column">
+                    {/* ACTION BUTTONS */}
+                    <NavLink
+                        to="/add-one"
+                        className={`button ${({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}`}
+                    >
+                        Add Word
+                    </NavLink>
+                    <NavLink to="/practise" className="button">
+                        Practise
+                    </NavLink>
+                </div>
+            </StyledHeader>
+        </Container>
     );
 };
 

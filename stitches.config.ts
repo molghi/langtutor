@@ -1,11 +1,12 @@
 import { createStitches } from "@stitches/react";
 
-export const { styled, css, globalCss, keyframes, theme, createTheme, config } = createStitches({
+const { styled, css, globalCss, keyframes, theme, createTheme, config } = createStitches({
     theme: {
         colors: {
             primary: "#0070f3",
             secondary: "#1c1c1e",
-            accent: "coral",
+            // accent: "coral",
+            accent: "green",
         },
         fonts: {
             body: "system-ui, sans-serif",
@@ -20,3 +21,16 @@ export const { styled, css, globalCss, keyframes, theme, createTheme, config } =
         xl: "(max-width: 1280px)",
     },
 });
+
+// Some easy animation
+const fadeIn = keyframes({
+    "0%": { opacity: 0, transform: "translateX(-100px)" },
+    "100%": { opacity: 1, transform: "translateX(0)" },
+});
+
+const appear = keyframes({
+    "0%": { opacity: 0 },
+    "100%": { opacity: 1 },
+});
+
+export { styled, css, globalCss, keyframes, theme, createTheme, config, fadeIn, appear };
