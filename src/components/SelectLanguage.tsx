@@ -155,12 +155,12 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
 
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { showLangInfo, setShowLangInfo, words } = context;
+    const { showLangInfo, setShowLangInfo, words, setLangInPractice, setCurrentQuizCounter } = context;
 
     const [langChoice, setLangChoice] = useState<string>("");
     const [languages, setLanguages] = useState<any[]>(langs);
 
-    console.log(langChoice);
+    // console.log(langChoice);
 
     useEffect(() => {
         // REDUCE LANG OPTIONS IF REVIEWING YOUR WORDS
@@ -170,54 +170,66 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
         }
     }, []);
 
+    const nowPath = location.pathname.split("/").slice(-1).join();
+    // console.log(nowPath);
+
     return (
         <Container data-name="Select Language">
             <StyledSelectLanguage>
                 {/* TITLE */}
+                <div className="small-title">{scenario === "your-words" ? "Your Words" : "Online Session"}</div>
                 <div className="page-title" style={{ marginBottom: "3rem" }}>
                     Select Language
                 </div>
 
-                {/* FOR THE 'REVIEW YOUR WORDS' MODE */}
-                {/* <div className="message">Nothing here yet because you haven't added any words to practise.</div> */}
-
-                <div className="box">
-                    {/* style={{ justifyContent: languages.length < 5 ? "initial" : "space-between" }} */}
-                    {/* RENDER LANG ELEMENTS */}
-                    {languages.map((lang: any, i: number) => (
-                        <div
-                            key={i}
-                            className={`option ${langChoice === lang.langCode ? "active" : ""}`}
-                            data-lang={lang.langCode}
-                            onMouseEnter={() => setShowLangInfo(lang.langCode)}
-                            onMouseLeave={() => setShowLangInfo(null)}
-                            onClick={() => setLangChoice(lang.langCode)}
-                        >
-                            <span className="content">
-                                <span>
-                                    <span className="flag">{lang.langFlag}</span>
-                                    <span className="name">{lang.langName}</span>
+                {languages.length > 0 ? (
+                    <div className="box">
+                        {/* RENDER LANG ELEMENTS */}
+                        {languages.map((lang: any, i: number) => (
+                            <div
+                                key={i}
+                                className={`option ${langChoice === lang.langCode ? "active" : ""}`}
+                                data-lang={lang.langCode}
+                                onMouseEnter={() => setShowLangInfo(lang.langCode)}
+                                onMouseLeave={() => setShowLangInfo(null)}
+                                onClick={() => {
+                                    setLangChoice(lang.langCode);
+                                    setLangInPractice(
+                                        (langs.find((entry) => entry.langCode === lang.langCode)?.langFlag || "") +
+                                            " " +
+                                            (langs.find((entry) => entry.langCode === lang.langCode)?.langName || "")
+                                    );
+                                }}
+                            >
+                                <span className="content">
+                                    <span>
+                                        <span className="flag">{lang.langFlag}</span>
+                                        <span className="name">{lang.langName}</span>
+                                    </span>
                                 </span>
-                            </span>
-                        </div>
-                    ))}
+                            </div>
+                        ))}
 
-                    {/* BOTTOM BUTTON */}
-                    <div className="action">
-                        <Link
-                            to={`/practise/online-session/${langs
-                                .find((entry) => entry.langCode === langChoice)
-                                ?.langName.toLowerCase()}`}
-                            className="button"
-                            style={{
-                                pointerEvents: !langChoice ? "none" : "initial",
-                                opacity: !langChoice ? 0.4 : 1,
-                            }}
-                        >
-                            Begin Practice &gt;
-                        </Link>
+                        {/* BOTTOM BUTTON */}
+                        <div className="action">
+                            <Link
+                                to={`/practise/${nowPath}/${langs
+                                    .find((entry) => entry.langCode === langChoice)
+                                    ?.langName.toLowerCase()}`}
+                                onClick={() => setCurrentQuizCounter(0)}
+                                className="button"
+                                style={{
+                                    pointerEvents: !langChoice ? "none" : "initial",
+                                    opacity: !langChoice ? 0.4 : 1,
+                                }}
+                            >
+                                Begin Practice &gt;
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="message">Nothing here yet because you haven't added any words to practise.</div>
+                )}
 
                 {/* HOVER-ACTIVATED POP-UP */}
                 {showLangInfo && (

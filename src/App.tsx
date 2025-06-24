@@ -10,17 +10,18 @@ import SelectLanguage from "./components/SelectLanguage";
 import MyContext from "./context/MyContext";
 import { useContext, useEffect } from "react";
 import Notification from "./components/Notification";
-import Round from "./components/Round";
+import Rounds from "./components/Rounds";
 import Results from "./components/Results";
 import Footer from "./components/Footer";
 import NotFound from "./components/NotFound";
+import Again from "./components/Again";
 
 globalStyles();
 
 function App() {
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { uiMessage, setUiMessage, localStorageAccentColorKey, setWords, localStorageKey } = context;
+    const { uiMessage, setUiMessage, localStorageAccentColorKey, setWords, localStorageKey, langInPractice } = context;
 
     useEffect(() => {
         // Hide Notification after 5 sec
@@ -60,9 +61,11 @@ function App() {
                         <Route path="/add-many" element={<AddMany />} />
                         <Route path="/practise" element={<SelectMode />} />
                         <Route path="/practise/online-session" element={<SelectLanguage scenario="online-session" />} />
-                        <Route path="/practise/online-session/:langCode" element={<Round />} />
+                        <Route path="/practise/online-session/:lang" element={<Rounds />} />
                         <Route path="/practise/results" element={<Results />} />
                         <Route path="/practise/your-words" element={<SelectLanguage scenario="your-words" />} />
+                        <Route path="/practise/your-words/:lang" element={<Rounds />} />
+                        <Route path="/practise/again" element={<Again />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </div>

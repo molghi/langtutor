@@ -80,12 +80,24 @@ export const globalStyles = globalCss({
         marginBottom: "2rem",
     },
 
+    ".small-title": {
+        marginBottom: "2rem",
+        opacity: 0.3,
+        "&:hover": {
+            opacity: 1,
+        },
+    },
+
     ".required": {
         color: "red",
         position: "absolute",
         top: "1.3rem",
         left: "-2rem",
         textShadow: "0 0 3px red",
+    },
+
+    ".text-center": {
+        textAlign: "center",
     },
 
     // BREAKPOINTS

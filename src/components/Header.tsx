@@ -1,6 +1,8 @@
 import { styled } from "../../stitches.config";
 import { NavLink, Link } from "react-router-dom";
 import { Container } from "./styled/Container";
+import MyContext from "../context/MyContext";
+import { useContext } from "react";
 
 // STYLES
 const StyledHeader = styled("div", {
@@ -34,18 +36,34 @@ const StyledHeader = styled("div", {
         backgroundColor: "$accent",
         color: "black",
     },
+
+    ".logo-box": {
+        display: "flex",
+        alignItems: "center",
+        columnGap: "1rem",
+        span: {
+            fontSize: "3rem",
+        },
+    },
 });
 
 // MARKUP
 const Header = () => {
+    const context = useContext(MyContext);
+    if (!context) throw new Error("Error using context");
+    const { langInPractice } = context;
+
     return (
         <Container data-name="Header" css={{ height: "initial" }}>
             <StyledHeader>
                 <div className="column">
                     {/* LOGO */}
-                    <Link to="/" className="heading">
-                        LangTutor
-                    </Link>
+                    <div className="logo-box">
+                        <Link to="/" className="heading">
+                            LangTutor
+                        </Link>
+                        {langInPractice && <span title={langInPractice.split(" ")[1]}>{langInPractice.split(" ")[0]}</span>}
+                    </div>
                 </div>
 
                 <div className="column">
