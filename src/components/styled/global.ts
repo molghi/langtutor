@@ -29,11 +29,12 @@ export const globalStyles = globalCss({
     },
 
     body: {
-        fontFamily: "Share Tech Mono",
+        fontFamily: "Share Tech Mono, monospace",
         backgroundColor: "black",
         color: "white",
         fontSize: "1.6rem",
         height: "100%",
+        overflowX: "hidden",
     },
 
     "#root": {
@@ -49,6 +50,7 @@ export const globalStyles = globalCss({
     ".button": {
         cursor: "pointer",
         fontFamily: "inherit",
+        textDecoration: "none",
         padding: "1.1rem 1.5rem",
         outline: "none",
         border: `1px solid`,
@@ -71,7 +73,8 @@ export const globalStyles = globalCss({
     },
 
     ".page-title": {
-        fontSize: "3.2rem",
+        // fontSize: "3.2rem",
+        fontSize: "4rem",
         backgroundColor: "$accent",
         color: "black",
         textShadow: "0 0 1px black",
@@ -105,6 +108,11 @@ export const globalStyles = globalCss({
     "@md": {
         ".page-title": {
             fontSize: "2.8rem",
+        },
+        ".button": {
+            display: "block",
+            width: "100%",
+            textAlign: "center",
         },
     },
 

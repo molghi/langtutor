@@ -77,6 +77,12 @@ const StyledAddMany = styled("div", {
     ".required": {
         top: "3.5rem",
     },
+
+    "@md": {
+        ".example": {
+            display: "block",
+        },
+    },
 });
 
 // MARKUP

@@ -61,9 +61,28 @@ const StyledAddOne = styled("div", {
             opacity: 1,
         },
     },
+
+    "@md": {
+        ".multi": {
+            position: "relative",
+            bottom: 0,
+            marginTop: "2rem",
+            marginBottom: "4rem",
+        },
+    },
 });
 
+const getRandomNum = (upperLimit: number): number => Math.floor(Math.random() * upperLimit);
+
 // DATA TO RENDER FIELDS
+const flagOptions = {
+    English: ["🇬🇧", "🇺🇸", "🇨🇦", "🇦🇺"],
+    Spanish: ["🇪🇸", "🇲🇽", "🇦🇷", "🇨🇴", "🇨🇱"],
+    French: ["🇫🇷", "🇨🇦", "🇨🇭", "🇧🇪"],
+    Arabic: ["🇸🇦", "🇪🇬", "🇵🇸", "🇲🇦"],
+    Portuguese: ["🇧🇷", "🇵🇹"],
+    German: ["🇩🇪", "🇦🇹", "🇨🇭"],
+};
 const fields = [
     {
         type: "select",
@@ -71,17 +90,17 @@ const fields = [
         required: "true",
         title: "Select Language",
         choices: [
-            "🇬🇧 English",
+            `${flagOptions["English"][getRandomNum(flagOptions["English"].length)]} English`,
             "🇨🇳 Chinese (Mandarin)",
             "🇮🇳 Hindi",
-            "🇪🇸 Spanish",
-            "🇫🇷 French",
-            "🇵🇸 Arabic",
+            `${flagOptions["Spanish"][getRandomNum(flagOptions["Spanish"].length)]} Spanish`,
+            `${flagOptions["French"][getRandomNum(flagOptions["French"].length)]} French`,
+            `${flagOptions["Arabic"][getRandomNum(flagOptions["Arabic"].length)]} Arabic`,
             "🇧🇩 Bengali",
-            "🇵🇹 Portuguese",
+            `${flagOptions["Portuguese"][getRandomNum(flagOptions["Portuguese"].length)]} Portuguese`,
             "🇷🇺 Russian",
             "🇵🇰 Urdu",
-            "🇩🇪 German",
+            `${flagOptions["German"][getRandomNum(flagOptions["German"].length)]} German`,
             "🇨🇿 Czech",
             "🇮🇸 Icelandic",
             "🇻🇦 Latin",
@@ -91,11 +110,11 @@ const fields = [
             "🇮🇹 Italian",
             "🇮🇷 Persian",
             "🇰🇷 Korean",
-            "🇻🇳 Vietnamese",
             "🇵🇱 Polish",
             "🇹🇭 Thai",
             "🇬🇷 Greek",
             "🇮🇱 Hebrew",
+            "🇬🇪 Georgian",
         ],
     },
     { type: "text", name: "word", required: true, title: "Word (in target language)" },

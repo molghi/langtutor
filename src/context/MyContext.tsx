@@ -17,6 +17,17 @@ interface ContextTypes {
     setCurrentQuizCounter: React.Dispatch<React.SetStateAction<number>>;
     answers: any[];
     setAnswers: React.Dispatch<React.SetStateAction<any[]>>;
+    isFinished: boolean;
+    setIsFinished: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedMode: string;
+    setSelectedMode: React.Dispatch<React.SetStateAction<string>>;
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    isFirstRender: boolean;
+    setIsFirstRender: React.Dispatch<React.SetStateAction<boolean>>;
+    lastPracticed: number;
+    setLastPracticed: React.Dispatch<React.SetStateAction<number>>;
+    localStorageLastPractised: string;
 }
 
 const MyContext = createContext<ContextTypes | undefined>(undefined);
@@ -28,6 +39,9 @@ interface ContextProviderProps {
 export const ContextProvider = ({ children }: ContextProviderProps) => {
     const localStorageKey: string = "langtutor_user_words";
     const localStorageAccentColorKey: string = "langtutor_accent_color";
+    const localStorageLastPractised: string = "langtutor_last_practised";
+
+    const lastPractisedFromLS = localStorage.getItem(localStorageLastPractised);
 
     const wordsFromLS = localStorage.getItem(localStorageKey);
 
@@ -38,6 +52,11 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
     const [currentQuizData, setCurrentQuizData] = useState<any[]>([]);
     const [currentQuizCounter, setCurrentQuizCounter] = useState<number>(0);
     const [answers, setAnswers] = useState<string[]>([]);
+    const [isFinished, setIsFinished] = useState<boolean>(false);
+    const [selectedMode, setSelectedMode] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
+    const [lastPracticed, setLastPracticed] = useState<number>(lastPractisedFromLS ? +lastPractisedFromLS : -1);
 
     return (
         <MyContext.Provider
@@ -58,6 +77,17 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
                 setCurrentQuizCounter,
                 answers,
                 setAnswers,
+                isFinished,
+                setIsFinished,
+                selectedMode,
+                setSelectedMode,
+                isLoading,
+                setIsLoading,
+                isFirstRender,
+                setIsFirstRender,
+                lastPracticed,
+                setLastPracticed,
+                localStorageLastPractised,
             }}
         >
             {children}

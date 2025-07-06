@@ -2,6 +2,8 @@ import { styled, fadeIn } from "../../stitches.config";
 import { Container } from "./styled/Container";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import MyContext from "../context/MyContext";
+import { useContext } from "react";
 
 // STYLES
 const StyledSelectMode = styled("div", {
@@ -35,6 +37,7 @@ const StyledSelectMode = styled("div", {
         fontSize: "2rem",
         padding: "1rem 1.5rem",
         display: "inline-block",
+        transition: "all .2s",
         "&:hover": {
             backgroundColor: "$accent",
             color: "black",
@@ -46,9 +49,17 @@ const StyledSelectMode = styled("div", {
     ".explainer": {
         color: "$accent",
         opacity: 0.5,
+        transition: "all .2s",
+        "&:hover": {
+            opacity: 1,
+        },
     },
 
-    ".action": { flex: "1 1 100%", textAlign: "right", marginTop: "5rem" },
+    ".action": {
+        flex: "1 1 100%",
+        textAlign: "right",
+        marginTop: "5rem",
+    },
 
     ".no-hover": { pointerEvents: "none" },
 
@@ -59,6 +70,23 @@ const StyledSelectMode = styled("div", {
     ".active": {
         backgroundColor: "$accent",
         color: "black",
+    },
+
+    "@lg": {
+        ".option": {
+            flexDirection: "column",
+            alignItems: "start",
+            rowGap: "1.5rem",
+        },
+    },
+
+    "@md": {
+        ".box": {
+            rowGap: "4rem",
+        },
+        ".action": {
+            textAlign: "center",
+        },
     },
 });
 
@@ -75,7 +103,16 @@ const options = [
 
 // MARKUP
 const SelectMode = () => {
+    const context = useContext(MyContext);
+    if (!context) throw new Error("Error using context");
+    const { setSelectedMode, isLoading } = context;
+
     const [modeChoice, setModeChoice] = useState<number>(-1);
+
+    const changeMode = (i: number) => {
+        setModeChoice(i);
+        setSelectedMode(options[i].name.toLowerCase().replaceAll(" ", "-"));
+    };
 
     return (
         <Container data-name="Select Mode">
@@ -86,9 +123,10 @@ const SelectMode = () => {
                 <div className="box">
                     {/* OPTIONS */}
                     {options.map((choice: any, i: number) => (
-                        <div key={i} className="option" onClick={() => setModeChoice(i)}>
+                        <div key={i} className="option">
                             <span
                                 className={`name ${!choice.active ? "no-hover dimmed" : ""} ${modeChoice === i ? "active" : ""}`}
+                                onClick={() => changeMode(i)}
                             >
                                 {choice.name}
                             </span>

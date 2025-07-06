@@ -2,6 +2,8 @@ import { styled, theme, fadeIn } from "../../stitches.config";
 import { Container } from "./styled/Container";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import MyContext from "../context/MyContext";
+import { useContext } from "react";
 
 // STYLES
 const StyledRound = styled("div", {
@@ -85,19 +87,25 @@ const StyledRound = styled("div", {
     },
 
     ".row-title": { opacity: 0.5 },
+
+    ".input-msg": {
+        transform: "translateY(20px)",
+        color: "red",
+    },
 });
 
 interface RoundTypes {
     roundData: { [key: string]: any };
-    currentQuizCounter: number;
-    setCurrentQuizCounter: any;
-    setAnswers: any;
     rounds: number;
 }
 
 // MARKUP
-const Round = ({ roundData, currentQuizCounter, setCurrentQuizCounter, setAnswers, rounds }: RoundTypes) => {
+const Round = ({ roundData, rounds }: RoundTypes) => {
     if (!roundData) return null;
+
+    const context = useContext(MyContext);
+    if (!context) throw new Error("Error using context");
+    const { currentQuizCounter, setCurrentQuizCounter, answers, setAnswers, setIsFinished, langInPractice } = context;
 
     const inputRef = useRef<HTMLInputElement>(null);
     const btnRef = useRef<HTMLAnchorElement>(null);
@@ -111,31 +119,39 @@ const Round = ({ roundData, currentQuizCounter, setCurrentQuizCounter, setAnswer
     const note: string = roundData.note;
 
     const [inputValue, setInputValue] = useState<string>("");
+    const [inputMsg, setInputMsg] = useState<string>("");
 
     useEffect(() => {
+        // WHEN ROUNDDATA CHANGES, INPUT VALUE RESETS, INPUT FOCUSES
         setInputValue("");
         inputRef.current && inputRef.current.focus();
     }, [roundData, currentQuizCounter]);
 
+    // UPON CLICKING THE ACTION BTN
     const actionBtnClick = (isLastRound: boolean) => {
+        if (!inputValue) return setInputMsg("Please fill in the field!");
+        setInputMsg("");
         setCurrentQuizCounter((prev: number) => prev + 1);
         setAnswers((prev: any[]) => [...prev, inputValue]);
-        if (isLastRound) setCurrentQuizCounter(0);
+        if (isLastRound) {
+            setIsFinished(true);
+        }
     };
 
+    // UPON FORM SUBMIT
     const formSubmit = (e: React.FormEvent<HTMLFormElement>, isLastRound: boolean) => {
         e.preventDefault();
         btnRef.current && btnRef.current.click();
-        setAnswers((prev: any[]) => [...prev, inputValue]);
-        if (isLastRound) setCurrentQuizCounter(0);
     };
+
+    // console.log(answers);
 
     return (
         <Container>
             <StyledRound>
                 {/* PROGRESS BAR */}
                 <div className="progress">
-                    <span className="bar" style={{ width: 100 / rounds + "%" }}></span>
+                    <span className="bar" style={{ width: (100 / rounds) * (currentQuizCounter + 1) + "%" }}></span>
                     <span>Round:</span>
                     <span>
                         <span>{roundNumber}</span>
@@ -145,7 +161,9 @@ const Round = ({ roundData, currentQuizCounter, setCurrentQuizCounter, setAnswer
 
                 {/* ROUND TEXT */}
                 <div className="box">
-                    <div className="round-title">How would you translate this?</div>
+                    <div className="round-title">
+                        {langInPractice.includes("English") ? "How would you define this?" : "How would you translate this?"}
+                    </div>
                     <div className="round-word page-title">{word}</div>
 
                     {pronunciation && (
@@ -185,12 +203,14 @@ const Round = ({ roundData, currentQuizCounter, setCurrentQuizCounter, setAnswer
                                 autoFocus
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
+                                required={true}
                             />
+                            {inputMsg && <div className="input-msg">{inputMsg}</div>}
                         </div>
                     </form>
                 </div>
 
-                {/* BOTTOM BUTTON */}
+                {/* BOTTOM ACTION BUTTON */}
                 <div className="btn-box">
                     <Link
                         ref={btnRef}

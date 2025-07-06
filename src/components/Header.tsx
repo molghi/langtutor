@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import { Container } from "./styled/Container";
 import MyContext from "../context/MyContext";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 // STYLES
 const StyledHeader = styled("div", {
@@ -18,7 +19,11 @@ const StyledHeader = styled("div", {
 
     ".heading": {
         color: "$accent",
+        cursor: "pointer",
         opacity: 0.5,
+        backgroundColor: "transparent",
+        border: "none",
+        fontFamily: "inherit",
         fontSize: "2.8rem",
         "&:hover": {
             opacity: 1,
@@ -45,13 +50,33 @@ const StyledHeader = styled("div", {
             fontSize: "3rem",
         },
     },
+
+    
 });
 
 // MARKUP
 const Header = () => {
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { langInPractice } = context;
+    const { langInPractice, currentQuizData, setCurrentQuizData, setCurrentQuizCounter, setAnswers, setIsFirstRender } = context;
+
+    const navigate = useNavigate();
+
+    const redirect = (to: string) => {
+        if (currentQuizData.length > 0) {
+            const answer = confirm(`You are in the middle of a practice session.\nAre you sure you want to exit?`);
+            if (!answer) return;
+            setCurrentQuizData([]);
+            setCurrentQuizCounter(0);
+            setAnswers([]);
+            navigate(to);
+        } else {
+            navigate(to);
+        }
+        setTimeout(() => {
+            setIsFirstRender(false);
+        }, 50);
+    };
 
     return (
         <Container data-name="Header" css={{ height: "initial" }}>
@@ -59,24 +84,27 @@ const Header = () => {
                 <div className="column">
                     {/* LOGO */}
                     <div className="logo-box">
-                        <Link to="/" className="heading">
+                        <button className="heading" onClick={() => redirect("/")}>
                             LangTutor
-                        </Link>
+                        </button>
                         {langInPractice && <span title={langInPractice.split(" ")[1]}>{langInPractice.split(" ")[0]}</span>}
                     </div>
                 </div>
 
                 <div className="column">
                     {/* ACTION BUTTONS */}
-                    <NavLink
-                        to="/add-one"
-                        className={`button ${({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}`}
+                    <button
+                        className={`button ${location.pathname.includes("add-") ? "active" : ""}`}
+                        onClick={() => redirect("/add-one")}
                     >
                         Add Word
-                    </NavLink>
-                    <NavLink to="/practise" className="button">
+                    </button>
+                    <button
+                        className={`button ${location.pathname.includes("practise") ? "active" : ""}`}
+                        onClick={() => redirect("/practise")}
+                    >
                         Practise
-                    </NavLink>
+                    </button>
                 </div>
             </StyledHeader>
         </Container>

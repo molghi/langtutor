@@ -76,6 +76,15 @@ const StyledBottomActions = styled("div", {
     ".importer": {
         display: "none",
     },
+
+    "@lg": {
+        ".action": {
+            padding: "10px 15px",
+        },
+        ".menu": {
+            bottom: "112%",
+        },
+    },
 });
 
 // POSSIBLE ACTIONS

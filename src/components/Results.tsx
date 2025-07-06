@@ -3,6 +3,7 @@ import { Container } from "./styled/Container";
 import MyContext from "../context/MyContext";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // STYLES
 const StyledResults = styled("div", {
@@ -42,6 +43,9 @@ const StyledResults = styled("div", {
         flexDirection: "column",
         rowGap: "1rem",
         transition: "box-shadow 0.3s",
+        "&:hover": {
+            boxShadow: "0 0 5px #777",
+        },
     },
 
     ".item-number": {
@@ -155,13 +159,40 @@ const StyledResults = styled("div", {
             color: "black",
         },
     },
+
+    "@md": {
+        ".btn-box .button": {
+            marginTop: "2rem",
+        },
+    },
 });
 
 // MARKUP
 const Results = () => {
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { answers, currentQuizData, setWords } = context;
+    const {
+        answers,
+        currentQuizData,
+        words,
+        setWords,
+        isFinished,
+        langInPractice,
+        localStorageKey,
+        setCurrentQuizData,
+        setCurrentQuizCounter,
+        setAnswers,
+        setLastPracticed,
+        localStorageLastPractised,
+        lastPracticed,
+    } = context;
+
+    const navigate = useNavigate();
+
+    if (!isFinished) {
+        navigate("/practise");
+        return null;
+    }
 
     const [ratings, setRatings] = useState<any>({});
 
@@ -172,30 +203,67 @@ const Results = () => {
             entry[0] = currentQuizData[index].word;
             return entry;
         });
+
         // Update words / SRS method
         setWords((prev) => {
-            const practisedLang = currentQuizData[0].language;
-            const practisedWords = currentQuizData.map((x) => x.word);
-            const newState = prev.map((wordObj) => {
-                if (practisedWords.includes(wordObj.word) && wordObj.language === practisedLang) {
-                    const wordRating = properRatings.find((entry) => entry[0] === wordObj.word)[1];
+            const practisedLang: string = langInPractice.split(" ")[1].toLowerCase();
+            const practisedWords: string[] = currentQuizData.map((x) => x.word.toLowerCase());
+            const stateWords: any[] = prev.map((wordObj) => ({ word: wordObj.word, language: wordObj.language }));
+
+            const newState: any[] = practisedWords.map((practisedWord, index) => {
+                const found = stateWords.find(
+                    (wordObj) => wordObj.word.toLowerCase() === practisedWord && wordObj.language.toLowerCase() === practisedLang
+                );
+                if (found) {
+                    const wordRating: string = properRatings.find((entry) => entry[0] === practisedWord)[1];
                     let revisionDate;
                     if (wordRating === "Wrong") revisionDate = Date.now(); // immediately
                     if (wordRating === "Hard")
-                        revisionDate = wordObj.revisedTimes > 1 ? Date.now() + 15 * 60 * 1000 : Date.now() + 24 * 60 * 60 * 1000; // in 15 min or tomorrow
+                        revisionDate = found.revisedTimes > 1 ? Date.now() + 15 * 60 * 1000 : Date.now() + 24 * 60 * 60 * 1000; // in 15 min or tomorrow
                     if (wordRating === "Good")
                         revisionDate =
-                            wordObj.revisedTimes > 1 ? Date.now() + 24 * 60 * 60 * 1000 : Date.now() + 72 * 60 * 60 * 1000; // in 1 day or 3 days
+                            found.revisedTimes > 1 ? Date.now() + 24 * 60 * 60 * 1000 : Date.now() + 72 * 60 * 60 * 1000; // in 1 day or 3 days
                     if (wordRating === "Easy")
                         revisionDate =
-                            wordObj.revisedTimes > 1 ? Date.now() + 96 * 60 * 60 * 1000 : Date.now() + 192 * 60 * 60 * 1000; // in 4 days or 8 days
-                    wordObj.nextRevisionDateTime = revisionDate;
-                    wordObj.revisedTimes += 1;
+                            found.revisedTimes > 1 ? Date.now() + 96 * 60 * 60 * 1000 : Date.now() + 192 * 60 * 60 * 1000; // in 4 days or 8 days
+                    found.nextRevisionDateTime = revisionDate;
+                    found.revisedTimes += 1;
+                } else {
+                    const wordRating: string = properRatings.find((entry) => entry[0] === practisedWord)[1];
+                    let revisionDate;
+                    if (wordRating === "Wrong") revisionDate = Date.now(); // immediately
+                    if (wordRating === "Hard") revisionDate = Date.now() + 15 * 60 * 1000; // in 15 min
+                    if (wordRating === "Good") revisionDate = Date.now() + 24 * 60 * 60 * 1000; // in 1 day
+                    if (wordRating === "Easy") revisionDate = Date.now() + 96 * 60 * 60 * 1000; // in 4 days
+                    const wordObj = {
+                        added: new Date().toISOString(),
+                        definition: currentQuizData[index].definition || "",
+                        exampleTarget: currentQuizData[index].exampleTarget || "",
+                        exampleTranslation: currentQuizData[index].exampleTranslation || "",
+                        id: `${Date.now()}.${index}`,
+                        language: `${practisedLang}`,
+                        note: currentQuizData[index].note || "",
+                        pronunciation: currentQuizData[index].pronunciation || "",
+                        ratedAs: "",
+                        revisedTimes: 0,
+                        translation: currentQuizData[index].translation || "",
+                        word: practisedWord,
+                        nextRevisionDateTime: revisionDate,
+                    };
+                    return wordObj;
                 }
-                return wordObj;
             });
-            return newState;
+
+            setLastPracticed(Date.now());
+            localStorage.setItem(localStorageLastPractised, JSON.stringify(Date.now())); // Persist change to localStorage
+            const final: any[] = [...prev, ...newState];
+            localStorage.setItem(localStorageKey, JSON.stringify(final)); // Persist change to localStorage
+            return final;
         });
+
+        setCurrentQuizData([]);
+        setCurrentQuizCounter(0);
+        setAnswers([]);
     };
 
     // EVALUATION BUTTONS CONTENT
@@ -224,7 +292,10 @@ const Results = () => {
                             <div className="item-row">
                                 <div className="item-row-title">Question:</div>
                                 <div className="item-row-value">
-                                    How would you translate this? — <span className="item-word">{entry.word}</span>
+                                    {langInPractice.includes("English")
+                                        ? "How would you define this?"
+                                        : "How would you translate this?"}{" "}
+                                    — <span className="item-word">{entry.word}</span>
                                 </div>
                             </div>
                             <div className="item-row item-row--your">

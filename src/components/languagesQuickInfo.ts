@@ -25,21 +25,21 @@ const languagesQuickInfo = (langCode: string): any => {
 
         es: {
             speakers: "About 559.1 million.",
-            countries: "Mexico, Colombia, Argentina, Spain, Chile.",
+            countries: "Mexico, Colombia, Argentina, Chile, Venezuela, Spain.",
             family: "Indo-European, Romance.",
             note: "Having evolved from Latin, it spread worldwide during the Spanish Empire, particularly between the 15th and 17th centuries, as a result of Spanish colonisation, ultimately becoming the predominant language across much of Latin America. It holds official status in more than 20 countries today.",
         },
 
         fr: {
             speakers: "Approximately 274 million.",
-            countries: "France, Belgium, Switzerland, Democratic Republic of the Congo, Canada.",
+            countries: "France, Belgium, Switzerland, Canada, Democratic Republic of the Congo.",
             family: "Indo-European, Romance.",
             note: "Originated from Latin. Served as the diplomatic and cultural lingua franca in Europe during the 17th to 19th centuries, influencing international relations and arts. Considered relatively conservative among Romance languages. Known for its reluctance to borrow from English, many silent letters, and frequent nasal sounds.",
         },
 
         ar: {
             speakers: "Around 274 million.",
-            countries: "Egypt, Palestine, Syria, Morocco, Saudi Arabia.",
+            countries: "Egypt, Palestine, Syria, Morocco, Saudi Arabia, Iraq.",
             family: "Afro-Asiatic, Semitic.",
             note: "Unified as a literary language through the Quran in the 7th century, facilitating its spread across the Middle East and North Africa. Classical Arabic (Fus'ha), the language of the Quran, evolved into Modern Standard Arabic, which is used in media and formal settings. Written in its own script. Known for its emphatic consonants and rare guttural sounds.",
         },
@@ -55,7 +55,7 @@ const languagesQuickInfo = (langCode: string): any => {
             speakers: "About 258 million.",
             countries: "Brazil, Portugal, Mozambique.",
             family: "Indo-European, Romance.",
-            note: "Expanded globally during the Age of Discoveries in the 15th and 16th centuries, establishing its presence in South America, Africa, and Asia. It became one of the most widely spoken languages due to Portugal's extensive maritime exploration and colonial expansion.",
+            note: "Expanded globally during the Age of Discoveries in the 15th and 16th centuries, establishing its presence in South America, Africa, and Asia. It became one of the most widely spoken languages due to the Portuguese Empire's extensive maritime exploration and colonial expansion.",
         },
 
         ru: {
@@ -189,6 +189,12 @@ const languagesQuickInfo = (langCode: string): any => {
             countries: "Israel.",
             family: "Afro-Asiatic, Semitic.",
             note: "Typical of Semitic languages, it is written from right to left and follows a root-based structure, where words are formed from three-letter roots. Uses the Hebrew script. Revived as a spoken language in the 19th and 20th centuries after being primarily used in religious and literary contexts for centuries.",
+        },
+        ka: {
+            speakers: "Approximately 4 million.",
+            countries: "Primarily Georgia; secondarily Russia, Turkey, and Iran.",
+            family: "Kartvelian.",
+            note: "Georgian belongs to the Kartvelian language family, unrelated to any major world language groups. It uses its own unique script, the Mkhedruli alphabet with no capital letters, and is notable for its complex verb system and agglutinative structure. Has a rich literary tradition dating back to the 5th century.",
         },
     };
 

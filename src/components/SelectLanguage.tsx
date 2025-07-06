@@ -1,16 +1,22 @@
-import { styled, theme, fadeIn } from "../../stitches.config";
+import { styled, theme, fadeIn, keyframes } from "../../stitches.config";
 import { useState, useEffect } from "react";
 import { Container } from "./styled/Container";
 import { Link } from "react-router-dom";
 import MyContext from "../context/MyContext";
 import { useContext } from "react";
 import languagesQuickInfo from "./languagesQuickInfo";
+import spinnerImg from "../img/spinner.png";
 
 // STYLES
+const rotate360 = keyframes({
+    from: { transform: "rotate(0deg)" },
+    to: { transform: "rotate(360deg)" },
+});
 const StyledSelectLanguage = styled("div", {
     marginTop: "3rem",
     position: "relative",
     // height: "86vh",
+    height: "calc(100vh-10%)",
     animation: `${fadeIn} 2000ms ease-out`,
     transition: "all 1s",
 
@@ -83,8 +89,12 @@ const StyledSelectLanguage = styled("div", {
     ".action": {
         flex: "1 1 100%",
         textAlign: "right",
-        marginTop: "5rem",
+        marginTop: "1rem",
         fontSize: "2rem",
+        display: "flex",
+        justifyContent: "end",
+        alignItems: "center",
+        columnGap: "3rem",
     },
 
     ".action a": {
@@ -92,10 +102,14 @@ const StyledSelectLanguage = styled("div", {
     },
 
     ".lang-info": {
-        position: "absolute",
-        top: "88%",
-        left: "0px",
+        position: "fixed",
+        // bottom: "-23px",
+        bottom: "2%",
+        left: "50%",
+        transform: "translateX(-65%)",
         zIndex: "10",
+        boxShadow: "0 0 10px silver",
+        pointerEvents: "none",
         maxWidth: "77rem",
         width: "100%",
         lineHeight: "1.25",
@@ -109,6 +123,9 @@ const StyledSelectLanguage = styled("div", {
             textDecoration: "underline",
             fontWeight: "bold",
         },
+        "div:nth-child(1)": {
+            marginBottom: "0.3rem",
+        },
         span: {
             opacity: 0.5,
         },
@@ -118,21 +135,70 @@ const StyledSelectLanguage = styled("div", {
         backgroundColor: "$accent",
         ".name": { color: "black" },
     },
+
+    ".spinner": {
+        maxWidth: "40px",
+        animation: `${rotate360} 0.5s linear infinite`,
+        img: {
+            maxWidth: "100%",
+        },
+    },
+
+    "@lg": {
+        ".lang-info": {
+            left: "64%",
+        },
+        ".box": {
+            gap: "3rem",
+        },
+    },
+
+    "@md": {
+        ".box": {
+            gap: "2rem",
+        },
+        ".name": {
+            fontSize: "1.5rem",
+        },
+        ".flag": {
+            fontSize: "3rem",
+        },
+        ".action": {
+            textAlign: "center",
+        },
+        ".lang-info": {
+            display: "none",
+        },
+    },
 });
 
+const getRandomNum = (upperLimit: number): number => Math.floor(Math.random() * upperLimit);
+
 // LANG OPTIONS
-let langs = [
-    { langCode: "en", langFlag: "🇬🇧", langName: "English" },
+const flagOptions = {
+    English: ["🇬🇧", "🇺🇸", "🇨🇦", "🇦🇺"],
+    Spanish: ["🇪🇸", "🇲🇽", "🇦🇷", "🇨🇴", "🇨🇱"],
+    French: ["🇫🇷", "🇨🇦", "🇨🇭", "🇧🇪"],
+    Arabic: ["🇸🇦", "🇪🇬", "🇵🇸", "🇲🇦"],
+    Portuguese: ["🇧🇷", "🇵🇹"],
+    German: ["🇩🇪", "🇦🇹", "🇨🇭"],
+};
+const langs = [
+    { langCode: "en", langFlag: flagOptions["English"][getRandomNum(flagOptions["English"].length)], langName: "English" },
     { langCode: "zh", langFlag: "🇨🇳", langName: "Chinese" },
     { langCode: "hi", langFlag: "🇮🇳", langName: "Hindi" },
-    { langCode: "es", langFlag: "🇪🇸", langName: "Spanish" },
-    { langCode: "fr", langFlag: "🇫🇷", langName: "French" },
-    { langCode: "ar", langFlag: "🇵🇸", langName: "Arabic" },
+    { langCode: "es", langFlag: flagOptions["Spanish"][getRandomNum(flagOptions["Spanish"].length)], langName: "Spanish" },
+    { langCode: "fr", langFlag: flagOptions["French"][getRandomNum(flagOptions["French"].length)], langName: "French" },
+    { langCode: "ar", langFlag: flagOptions["Arabic"][getRandomNum(flagOptions["Arabic"].length)], langName: "Arabic" },
     { langCode: "be", langFlag: "🇧🇩", langName: "Bengali" },
-    { langCode: "pt", langFlag: "🇧🇷", langName: "Portuguese" },
+    {
+        langCode: "pt",
+        langFlag: flagOptions["Portuguese"][getRandomNum(flagOptions["Portuguese"].length)],
+        langName: "Portuguese",
+    },
     { langCode: "ru", langFlag: "🇷🇺", langName: "Russian" },
     { langCode: "ur", langFlag: "🇵🇰", langName: "Urdu" },
-    { langCode: "de", langFlag: "🇩🇪", langName: "German" },
+    { langCode: "de", langFlag: flagOptions["German"][getRandomNum(flagOptions["German"].length)], langName: "German" },
     { langCode: "cz", langFlag: "🇨🇿", langName: "Czech" },
     { langCode: "is", langFlag: "🇮🇸", langName: "Icelandic" },
     { langCode: "la", langFlag: "🇻🇦", langName: "Latin" },
@@ -142,11 +208,12 @@ let langs = [
     { langCode: "it", langFlag: "🇮🇹", langName: "Italian" },
     { langCode: "pe", langFlag: "🇮🇷", langName: "Persian" },
     { langCode: "ko", langFlag: "🇰🇷", langName: "Korean" },
-    { langCode: "vi", langFlag: "🇻🇳", langName: "Vietnamese" },
+    // { langCode: "vi", langFlag: "🇻🇳", langName: "Vietnamese" },
     { langCode: "po", langFlag: "🇵🇱", langName: "Polish" },
     { langCode: "th", langFlag: "🇹🇭", langName: "Thai" },
     { langCode: "gr", langFlag: "🇬🇷", langName: "Greek" },
     { langCode: "he", langFlag: "🇮🇱", langName: "Hebrew" },
+    { langCode: "ka", langFlag: "🇬🇪", langName: "Georgian" },
 ];
 
 // MARKUP
@@ -155,23 +222,112 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
 
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { showLangInfo, setShowLangInfo, words, setLangInPractice, setCurrentQuizCounter } = context;
+    const {
+        showLangInfo,
+        setShowLangInfo,
+        words,
+        setWords,
+        setLangInPractice,
+        setCurrentQuizCounter,
+        isLoading,
+        langInPractice,
+    } = context;
 
     const [langChoice, setLangChoice] = useState<string>("");
-    const [languages, setLanguages] = useState<any[]>(langs);
+    const [languages, setLanguages] = useState<any[]>([]);
 
     // console.log(langChoice);
 
     useEffect(() => {
         // REDUCE LANG OPTIONS IF REVIEWING YOUR WORDS
         if (scenario === "your-words") {
-            const languagesAdded: string[] = [...new Set(words.map((word) => word.language.toLowerCase()))];
-            setLanguages(languages.filter((langObj) => languagesAdded.includes(langObj.langName.toLowerCase())));
+            setWords((prev) => prev.filter((x) => x));
+            const languagesAdded: string[] = [...new Set(words.filter((x) => x).map((word) => word.language.toLowerCase()))];
+            setLanguages(langs.filter((langObj) => languagesAdded.includes(langObj.langName.toLowerCase())));
+        } else {
+            setLanguages(langs);
         }
     }, []);
 
     const nowPath = location.pathname.split("/").slice(-1).join();
-    // console.log(nowPath);
+
+    // POPUP ELEMENT
+    const popupElement = showLangInfo ? (
+        <div className="lang-info">
+            <div>Quick Info</div>
+            <span>Speakers:</span> {languagesQuickInfo(showLangInfo).speakers}
+            <br />
+            <span>Countries:</span> {languagesQuickInfo(showLangInfo).countries}
+            <br />
+            <span>Family:</span> {languagesQuickInfo(showLangInfo).family}
+            <br />
+            <span>Note:</span> {languagesQuickInfo(showLangInfo).note}
+        </div>
+    ) : null;
+
+    // CONTENT TO SHOW
+    let content = null;
+
+    // SHOW LANG OPTIONS
+    if (languages.length > 0)
+        content = (
+            <div className="box">
+                {/* RENDER LANG ELEMENTS */}
+                {languages.map((lang: any, i: number) => (
+                    <div
+                        key={i}
+                        className={`option ${langChoice === lang.langCode ? "active" : ""}`}
+                        data-lang={lang.langCode}
+                        onMouseEnter={() => setShowLangInfo(lang.langCode)}
+                        onMouseLeave={() => setShowLangInfo(null)}
+                        onClick={() => {
+                            setLangChoice(lang.langCode);
+                            setLangInPractice(
+                                (langs.find((entry) => entry.langCode === lang.langCode)?.langFlag || "") +
+                                    " " +
+                                    (langs.find((entry) => entry.langCode === lang.langCode)?.langName || "")
+                            );
+                        }}
+                    >
+                        <span className="content">
+                            <span>
+                                <span className="flag">{lang.langFlag}</span>
+                                <span className="name">{lang.langName}</span>
+                            </span>
+                        </span>
+                    </div>
+                ))}
+
+                {/* BOTTOM BUTTON BOX */}
+                <div className="action">
+                    {/* SHOW LOADING SPINNER */}
+                    {isLoading && (
+                        <div className="spinner">
+                            <img src={spinnerImg} alt="Loading Spinner" />
+                        </div>
+                    )}
+
+                    {/* BOTTOM BUTTON */}
+                    <Link
+                        to={`/practise/${nowPath}/${langs
+                            .find((entry) => entry.langCode === langChoice)
+                            ?.langName.toLowerCase()}`}
+                        onClick={() => setCurrentQuizCounter(0)}
+                        className="button"
+                        style={{
+                            pointerEvents: !langChoice ? "none" : "initial",
+                            opacity: !langChoice ? 0.4 : 1,
+                        }}
+                    >
+                        Begin Practice &gt;
+                    </Link>
+                </div>
+            </div>
+        );
+
+    // SHOW THERE IS NOTHING TO PRACTICE WITH
+    if (languages.length === 0 && scenario === "your-words")
+        content = <div className="message">Nothing here yet because you haven't added any words to practise.</div>;
 
     return (
         <Container data-name="Select Language">
@@ -182,68 +338,10 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
                     Select Language
                 </div>
 
-                {languages.length > 0 ? (
-                    <div className="box">
-                        {/* RENDER LANG ELEMENTS */}
-                        {languages.map((lang: any, i: number) => (
-                            <div
-                                key={i}
-                                className={`option ${langChoice === lang.langCode ? "active" : ""}`}
-                                data-lang={lang.langCode}
-                                onMouseEnter={() => setShowLangInfo(lang.langCode)}
-                                onMouseLeave={() => setShowLangInfo(null)}
-                                onClick={() => {
-                                    setLangChoice(lang.langCode);
-                                    setLangInPractice(
-                                        (langs.find((entry) => entry.langCode === lang.langCode)?.langFlag || "") +
-                                            " " +
-                                            (langs.find((entry) => entry.langCode === lang.langCode)?.langName || "")
-                                    );
-                                }}
-                            >
-                                <span className="content">
-                                    <span>
-                                        <span className="flag">{lang.langFlag}</span>
-                                        <span className="name">{lang.langName}</span>
-                                    </span>
-                                </span>
-                            </div>
-                        ))}
-
-                        {/* BOTTOM BUTTON */}
-                        <div className="action">
-                            <Link
-                                to={`/practise/${nowPath}/${langs
-                                    .find((entry) => entry.langCode === langChoice)
-                                    ?.langName.toLowerCase()}`}
-                                onClick={() => setCurrentQuizCounter(0)}
-                                className="button"
-                                style={{
-                                    pointerEvents: !langChoice ? "none" : "initial",
-                                    opacity: !langChoice ? 0.4 : 1,
-                                }}
-                            >
-                                Begin Practice &gt;
-                            </Link>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="message">Nothing here yet because you haven't added any words to practise.</div>
-                )}
+                {content}
 
                 {/* HOVER-ACTIVATED POP-UP */}
-                {showLangInfo && (
-                    <div className="lang-info">
-                        <div>Quick Info</div>
-                        <span>Speakers:</span> {languagesQuickInfo(showLangInfo).speakers}
-                        <br />
-                        <span>Countries:</span> {languagesQuickInfo(showLangInfo).countries}
-                        <br />
-                        <span>Family:</span> {languagesQuickInfo(showLangInfo).family}
-                        <br />
-                        <span>Note:</span> {languagesQuickInfo(showLangInfo).note}
-                    </div>
-                )}
+                {popupElement}
             </StyledSelectLanguage>
         </Container>
     );
