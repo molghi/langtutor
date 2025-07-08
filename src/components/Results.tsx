@@ -174,7 +174,6 @@ const Results = () => {
     const {
         answers,
         currentQuizData,
-        words,
         setWords,
         isFinished,
         langInPractice,
@@ -185,17 +184,20 @@ const Results = () => {
         setLastPracticed,
         localStorageLastPractised,
         lastPracticed,
+        setSessionsToday,
+        localStorageSessionsToday,
     } = context;
 
     const navigate = useNavigate();
 
     if (!isFinished) {
-        navigate("/practise");
+        navigate("/practise"); // this is because one shouldn't be able to access this URL by typing it manually (when isFinished is falsy)
         return null;
     }
 
     const [ratings, setRatings] = useState<any>({});
 
+    // Submit review
     const submitReview = () => {
         // Make array of proper ratings: practised word and its rating
         const properRatings: any[] = Object.entries(ratings).map((entry) => {
@@ -208,14 +210,19 @@ const Results = () => {
         setWords((prev) => {
             const practisedLang: string = langInPractice.split(" ")[1].toLowerCase();
             const practisedWords: string[] = currentQuizData.map((x) => x.word.toLowerCase());
-            const stateWords: any[] = prev.map((wordObj) => ({ word: wordObj.word, language: wordObj.language }));
+            const stateWords: any[] = prev.map((wordObj) => wordObj);
 
             const newState: any[] = practisedWords.map((practisedWord, index) => {
                 const found = stateWords.find(
                     (wordObj) => wordObj.word.toLowerCase() === practisedWord && wordObj.language.toLowerCase() === practisedLang
                 );
-                if (found) {
-                    const wordRating: string = properRatings.find((entry) => entry[0] === practisedWord)[1];
+
+                if (typeof found === "object" && Object.keys(found).length > 0) {
+                    const wordRating: string = properRatings.find(
+                        (entry) => entry[0].toLowerCase() === practisedWord.toLowerCase()
+                    )
+                        ? properRatings.find((entry) => entry[0].toLowerCase() === practisedWord.toLowerCase())[1]
+                        : "";
                     let revisionDate;
                     if (wordRating === "Wrong") revisionDate = Date.now(); // immediately
                     if (wordRating === "Hard")
@@ -226,8 +233,11 @@ const Results = () => {
                     if (wordRating === "Easy")
                         revisionDate =
                             found.revisedTimes > 1 ? Date.now() + 96 * 60 * 60 * 1000 : Date.now() + 192 * 60 * 60 * 1000; // in 4 days or 8 days
-                    found.nextRevisionDateTime = revisionDate;
-                    found.revisedTimes += 1;
+                    if (wordRating) {
+                        found.nextRevisionDateTime = revisionDate;
+                        found.revisedTimes += 1;
+                        return found;
+                    }
                 } else {
                     const wordRating: string = properRatings.find((entry) => entry[0] === practisedWord)[1];
                     let revisionDate;
@@ -254,20 +264,31 @@ const Results = () => {
                 }
             });
 
+            // console.log(newState);
+
             setLastPracticed(Date.now());
+            setSessionsToday((prev) => {
+                const newSessionsState = prev + 1;
+                const dateLastSession = new Date(lastPracticed).getDate();
+                const dateNow = new Date().getDate();
+                if (dateLastSession !== dateNow) localStorage.setItem(localStorageSessionsToday, JSON.stringify(0));
+                else localStorage.setItem(localStorageSessionsToday, JSON.stringify(newSessionsState));
+                return newSessionsState;
+            });
             localStorage.setItem(localStorageLastPractised, JSON.stringify(Date.now())); // Persist change to localStorage
             const final: any[] = [...prev, ...newState];
+            // const final: any[] = [...prev];
             localStorage.setItem(localStorageKey, JSON.stringify(final)); // Persist change to localStorage
             return final;
         });
 
-        setCurrentQuizData([]);
-        setCurrentQuizCounter(0);
-        setAnswers([]);
+        setCurrentQuizData([]); // Reset
+        setCurrentQuizCounter(0); // Reset
+        setAnswers([]); // Reset
     };
 
     // EVALUATION BUTTONS CONTENT
-    const buttons = [
+    const buttons: Array<{ [key: string]: string }> = [
         { text: "Wrong", title: "You failed to recall the word" },
         { text: "Hard", title: "You struggled but got it right" },
         { text: "Good", title: "You recalled it correctly with little effort" },
@@ -374,6 +395,7 @@ const Results = () => {
                         {Object.keys(ratings).length < currentQuizData.length && (
                             <span style={{ marginRight: "2rem" }}>Rate each question to submit!</span>
                         )}
+
                         <Link
                             to="/practise/again"
                             className="button"
@@ -393,3 +415,11 @@ const Results = () => {
 };
 
 export default Results;
+
+/*
+
+*/
+
+/*
+
+*/

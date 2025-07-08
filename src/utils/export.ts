@@ -10,9 +10,14 @@ function exportWords(data: any) {
         .toString()
         .padStart(2, "0")}.json`;
 
-    const json = JSON.stringify(data, null, 2); // Convert data to JSON: Converts the JavaScript object 'data' into a formatted JSON string. The 'null, 2' arguments ensure the output is pretty-printed with 2-space indentation for readability.
-    const blob = new Blob([json], { type: "application/json" }); // Create a blob: Creates a binary large object (Blob) containing the JSON string, specifying the MIME type as 'application/json' to ensure it's recognised as a JSON file.
-    const url = URL.createObjectURL(blob); // Create a download URL: Generates a temporary URL pointing to the Blob, enabling it to be downloaded as a file by associating it with a download link.
+    // Convert data to JSON: Converts the JavaScript object 'data' into a formatted JSON string. The 'null, 2' arguments ensure the output is pretty-printed with 2-space indentation for readability.
+    const json = JSON.stringify(data, null, 2);
+
+    // Create a blob: Creates a binary large object (Blob) containing the JSON string, specifying the MIME type as 'application/json' to ensure it's recognised as a JSON file.
+    const blob = new Blob([json], { type: "application/json" });
+
+    // Create a download URL: Generates a temporary URL pointing to the Blob, enabling it to be downloaded as a file by associating it with a download link.
+    const url = URL.createObjectURL(blob);
 
     // Create an invisible anchor element for downloading
     const link = document.createElement("a");

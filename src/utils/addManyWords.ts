@@ -6,7 +6,7 @@ function addManyWords(
     localStorageKey: string,
     setFieldValue?: any,
     scenario: string = "bulkAdd" // can be either 'bulkAdd' or 'import'
-) {
+): void {
     // Make an array of word-lines: strings, each representing one word entry
     const wordLines: any[] = scenario === "bulkAdd" ? fieldValue.split("\n") : fieldValue;
 
@@ -47,8 +47,8 @@ function addManyWords(
 
 // =======================================================================================
 
-// dependency function
-function formWordObjects(wordLines: string[], counter: number) {
+// dependency function -- returns arr of objs
+function formWordObjects(wordLines: string[], counter: number): Array<{ [key: string]: string }> {
     return wordLines.map((wordLine) => {
         const categories = [
             "language",
@@ -84,7 +84,7 @@ function formWordObjects(wordLines: string[], counter: number) {
 // =======================================================================================
 
 // dependency function
-function reactToViolation(wordLineLengths: number[], setUiMessage: any) {
+function reactToViolation(wordLineLengths: number[], setUiMessage: any): void {
     // Identify which lines (not zero-based) have violations:
     const linesWithViolations = wordLineLengths
         .map((length, index) => {
@@ -103,7 +103,7 @@ function reactToViolation(wordLineLengths: number[], setUiMessage: any) {
 // =======================================================================================
 
 // dependency function
-function addWords(wordsToAdd: any[], words: any[], setWords: any, localStorageKey: string, amountOfWords: number) {
+function addWords(wordsToAdd: any[], words: any[], setWords: any, localStorageKey: string, amountOfWords: number): void {
     wordsToAdd.forEach((wordObj) => {
         // Check before adding: if such a 'word' already exists in my state wordbase and the 'language' is the same, do not add it
         const indexInState = words.findIndex(
@@ -119,7 +119,7 @@ function addWords(wordsToAdd: any[], words: any[], setWords: any, localStorageKe
                 localStorage.setItem(localStorageKey, JSON.stringify(newOnes)); // Push to LS
                 return newOnes;
             });
-        else amountOfWords -= 1; // if exists, do not add and decrement word count for the message
+        else amountOfWords -= 1; // if exists, do not add and decrement word count for the ui message
     });
 }
 

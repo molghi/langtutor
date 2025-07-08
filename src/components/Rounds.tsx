@@ -17,6 +17,7 @@ const rotate360 = keyframes({
     to: { transform: "rotate(360deg)" },
 });
 
+// Get random number
 const getRandomNum = (upperLimit: number): number => Math.floor(Math.random() * upperLimit);
 
 const Rounds = () => {
@@ -37,11 +38,11 @@ const Rounds = () => {
 
     useEffect(() => {
         if (!langInPractice) {
-            navigate("/practise");
+            navigate("/practise"); // this is because the 'practise/online-session/:lang' URL (where this component is) should not be accessed by typing it, only in-app
         }
     }, [langInPractice]);
 
-    const [nextRevision, setNextRevision] = useState();
+    const [nextRevision, setNextRevision] = useState<number>(-1);
 
     useEffect(() => {
         if (selectedMode === "review-your-words") {
@@ -50,7 +51,29 @@ const Rounds = () => {
         if (selectedMode === "new-online-session") {
             startOnlineSession(langInPractice, setCurrentQuizData, setIsLoading);
         }
+        // Set next revision
+        const wordsOfPractisedLang: Array<{ [key: string]: string }> = words.filter((wordObj) =>
+            wordObj.language.toLowerCase().includes(langInPractice.split(" ")[1].toLowerCase())
+        );
+        const wordsOfPractisedLangRevisions: number[] = wordsOfPractisedLang.map((x) => +x.nextRevisionDateTime);
+        const soonest = wordsOfPractisedLangRevisions.sort((a, b) => a - b)[0];
+        setNextRevision(soonest);
     }, [words, langInPractice]);
+
+    // Get when next revision
+    const getWhenNext = (timestamp: number): string => {
+        if (timestamp === 0) return "...";
+        const now: number = Date.now();
+        const difference: number = timestamp - now;
+        const inMunites: number = Math.floor(difference / 1000 / 60);
+        const inHours: number = Math.floor(difference / 1000 / 60 / 60);
+        let result: string = "";
+        // Cases
+        if (inMunites < 60) result = inMunites > 1 ? `in ${inMunites} minutes` : `in ${inMunites} minute`;
+        if (inMunites >= 60 && inHours < 24) result = inHours > 1 ? `in ${inHours} hours` : `in ${inHours} hour`;
+        else result = Math.floor(inHours / 24) > 1 ? `in ${Math.floor(inHours / 24)} days` : `in ${Math.floor(inHours / 24)} day`;
+        return result;
+    };
 
     let content = null;
 
@@ -92,7 +115,7 @@ const Rounds = () => {
                             <div>
                                 Next revision:{" "}
                                 <span style={{ opacity: 0.5 }}>{nextRevision && formatDateTime(nextRevision)} </span>
-                                <span style={{ opacity: 0.2 }}>(Now: {formatDateTime(Date.now())})</span>
+                                <span style={{ opacity: 0.2 }}>({getWhenNext(nextRevision)})</span>
                             </div>
                         )}
                     </div>
@@ -100,14 +123,13 @@ const Rounds = () => {
             );
     }
 
-    // console.log(currentQuizCounter, currentQuizData);
-
     return content;
 };
 
 // ============================================================================================================
 
-function reviewYourWords(words: any, langInPractice: string, setCurrentQuizData: any, setNextRevision: any) {
+// Dependency function
+function reviewYourWords(words: any, langInPractice: string, setCurrentQuizData: any, setNextRevision: any): void {
     if (words.length === 0) return;
 
     const wordsSelectedLang: any[] = words.filter((wordObj: any) => {
@@ -117,7 +139,7 @@ function reviewYourWords(words: any, langInPractice: string, setCurrentQuizData:
 
     if (wordsSelectedLang.length === 0) return;
 
-    const count = Math.min(10, wordsSelectedLang.length); // Pick smallest not to request more words than available
+    const count: number = Math.min(10, wordsSelectedLang.length); // Pick smallest not to request more words than available
 
     const indices = new Set<number>(); // Init a set of unique values
 
@@ -125,12 +147,12 @@ function reviewYourWords(words: any, langInPractice: string, setCurrentQuizData:
         indices.add(getRandomNum(wordsSelectedLang.length)); // Push to set until it is needed length
     }
 
-    const wordsThisPractice = [...indices]
+    const wordsThisPractice: any[] = [...indices]
         .map((i) => wordsSelectedLang[i])
         .filter((entry) => entry.nextRevisionDateTime <= Date.now() || !entry.nextRevisionDateTime); // Make an array, map to word objs, filter only those to practise now
 
+    // Update state
     setCurrentQuizData(wordsThisPractice);
-
     setNextRevision(
         words
             .filter((word: any) => word.language === langInPractice.split(" ")[1].toLowerCase())
@@ -141,22 +163,23 @@ function reviewYourWords(words: any, langInPractice: string, setCurrentQuizData:
 
 // ============================================================================================================
 
-function startOnlineSession(langInPractice: string, setCurrentQuizData: any, setIsLoading: any) {
+// Dependency function
+function startOnlineSession(langInPractice: string, setCurrentQuizData: any, setIsLoading: any): void {
     setIsLoading(true);
 
     // Get lang code (string)
     const getLangCode = async () => {
         const resp = await fetchLangs();
-        console.log(resp);
         return resp.result.find((langObj: any) =>
             langObj.codeName.toLowerCase().includes(langInPractice.split(" ")[1].toLowerCase())
         )?.full_code;
     };
 
     // Fetch 10 random words from prepared sets
-    const amountOfWords: number = 2;
+    const amountOfWords: number = 10; // amount of words, amount of rounds
     const wordsToPractice: string[] = [];
-    const getPreparedWords = () => {
+    // Get prepared words
+    ((): void => {
         let myRandomIndeces: number[] = [];
         // Generate 10 random indeces within certain bounds
         while (myRandomIndeces.length !== amountOfWords) {
@@ -173,8 +196,7 @@ function startOnlineSession(langInPractice: string, setCurrentQuizData: any, set
             if (word.split(" ")[1] === "ad") word = word.split(" ")[0];
             wordsToPractice.push(word);
         }
-    };
-    getPreparedWords();
+    })();
 
     // Fetch English examples and translate them
     (async () => {
@@ -194,10 +216,11 @@ function startOnlineSession(langInPractice: string, setCurrentQuizData: any, set
             responseWords = await Promise.all(wordsToPractice.map((word: string) => fetchTranslation(word, langCode))); // translated words
         }
 
+        // Update state
         setIsLoading(false);
 
         // Compose data for current session
-        const data = wordsToPractice.map((word, index) => ({
+        const data: Array<{ [key: string]: any }> = wordsToPractice.map((word, index) => ({
             word: !langInPractice.toLowerCase().includes("english") ? responseWords[index].result : responseWords[index],
             translation: word,
             pronunciation: responseWords[index].targetTransliteration,
@@ -210,8 +233,8 @@ function startOnlineSession(langInPractice: string, setCurrentQuizData: any, set
             id: `${Date.now()}.${index + 1}`,
             revisedTimes: 0,
         }));
-        console.log(data);
 
+        // Update state
         setCurrentQuizData(data);
     })();
 }

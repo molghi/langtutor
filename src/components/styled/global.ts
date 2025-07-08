@@ -29,7 +29,7 @@ export const globalStyles = globalCss({
     },
 
     body: {
-        fontFamily: "Share Tech Mono, monospace",
+        fontFamily: "Share Tech Mono, monospace, sans-serif",
         backgroundColor: "black",
         color: "white",
         fontSize: "1.6rem",
@@ -73,7 +73,6 @@ export const globalStyles = globalCss({
     },
 
     ".page-title": {
-        // fontSize: "3.2rem",
         fontSize: "4rem",
         backgroundColor: "$accent",
         color: "black",

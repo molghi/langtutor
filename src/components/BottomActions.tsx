@@ -87,8 +87,8 @@ const StyledBottomActions = styled("div", {
     },
 });
 
-// POSSIBLE ACTIONS
-const actions = [
+// POSSIBLE ACTIONS TO SHOW
+const actions: Array<{ [key: string]: string }> = [
     { name: "Change color", title: "Change the accent color of the interface" },
     { name: "Export", title: "Export as JSON" },
     { name: "Import", title: "Import as JSON" },
@@ -100,15 +100,21 @@ const BottomActions = () => {
     if (!context) throw new Error("Error using context");
     const { localStorageAccentColorKey, localStorageKey, setUiMessage, words, setWords } = context;
 
+    // Importer element reference
     const importerEl = useRef<HTMLInputElement | null>(null);
 
+    // Perform action
     const performAction = (actionName: string): void => {
-        if (actionName === "Change color") changeUiColor(localStorageAccentColorKey);
+        if (actionName === "Change color") {
+            changeUiColor(localStorageAccentColorKey);
+        }
         if (actionName === "Export") {
             const data = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
             exportWords(data);
         }
-        if (actionName === "Import") importWords(importerEl);
+        if (actionName === "Import") {
+            importWords(importerEl);
+        }
     };
 
     return (

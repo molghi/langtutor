@@ -1,4 +1,4 @@
-import { styled } from "@stitches/react";
+import { styled } from "../../stitches.config";
 import React from "react";
 import { Container } from "./styled/Container";
 
@@ -15,6 +15,10 @@ const StyledNotification = styled("div", {
     transform: "translateX(-50%)",
     bottom: "2rem",
 
+    "@lg": {
+        width: "90%",
+    },
+
     "&.success": {
         borderColor: "lime",
         color: "lime",
@@ -28,15 +32,16 @@ const StyledNotification = styled("div", {
 
 // MARKUP
 const Notification = ({ message }: { message: string }) => {
-    const type: string = message.split(" ")[0];
-    const text: string = message.split(" ").slice(1).join(" ");
+    const type: string = message.split(" ")[0]; // Notification type
+    const text: string = message.split(" ").slice(1).join(" "); // Notification text
 
-    // SUCCESS OR FAILURE MESSAGE
+    // EITHER SUCCESS OR FAILURE MESSAGE
     const classes: string = type === "success" ? "success" : "failure";
 
     return (
         <Container data-name="Container">
             <StyledNotification className={classes}>
+                {/* REPLACE BR AS PLAIN TEXT WITH REAL BR */}
                 {!text.includes("<br>")
                     ? text
                     : text.split("<br>").map((string, index) => (

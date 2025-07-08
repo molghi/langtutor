@@ -72,10 +72,12 @@ const StyledAddOne = styled("div", {
     },
 });
 
+// GET RANDOM NUMBER
 const getRandomNum = (upperLimit: number): number => Math.floor(Math.random() * upperLimit);
 
 // DATA TO RENDER FIELDS
-const flagOptions = {
+const flagOptions: { [key: string]: string[] } = {
+    // countries that speak that language
     English: ["🇬🇧", "🇺🇸", "🇨🇦", "🇦🇺"],
     Spanish: ["🇪🇸", "🇲🇽", "🇦🇷", "🇨🇴", "🇨🇱"],
     French: ["🇫🇷", "🇨🇦", "🇨🇭", "🇧🇪"],
@@ -83,14 +85,14 @@ const flagOptions = {
     Portuguese: ["🇧🇷", "🇵🇹"],
     German: ["🇩🇪", "🇦🇹", "🇨🇭"],
 };
-const fields = [
+const fields: Array<{ [key: string]: any }> = [
     {
         type: "select",
         name: "lang_select",
         required: "true",
         title: "Select Language",
         choices: [
-            `${flagOptions["English"][getRandomNum(flagOptions["English"].length)]} English`,
+            `${flagOptions["English"][getRandomNum(flagOptions["English"].length)]} English`, // get random flag
             "🇨🇳 Chinese (Mandarin)",
             "🇮🇳 Hindi",
             `${flagOptions["Spanish"][getRandomNum(flagOptions["Spanish"].length)]} Spanish`,
@@ -135,9 +137,8 @@ const AddOne = () => {
     const [fieldValues, setFieldValues] = useState<any>({});
 
     // MANIPULATE PIECE OF STATE
-    const onFieldChange = (fieldName: string, newValue: string) => {
+    const onFieldChange = (fieldName: string, newValue: string): void =>
         setFieldValues((prev: any) => ({ ...prev, [fieldName]: newValue }));
-    };
 
     // SMALL HELPER FUNCTIONS
     const capitalise = (value: string): string => (value ? value[0].toUpperCase() + value.slice(1).toLowerCase() : "");
@@ -147,7 +148,7 @@ const AddOne = () => {
     const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         // Create new entry
-        const wordEntry = {
+        const wordEntry: { [key: string]: any } = {
             language: fieldValues.lang_select,
             word: trimAndLower(fieldValues.word),
             translation: trimAndLower(fieldValues.translation),
@@ -178,7 +179,7 @@ const AddOne = () => {
             note: "",
         }));
         // Set UI msg
-        setUiMessage("success Word added!");
+        setUiMessage("success Word added!"); // first word ('success' here) will be sliced out; it's a type-identifier
     };
 
     // MARKUP

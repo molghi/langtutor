@@ -51,8 +51,8 @@ const Welcome = () => {
     if (!context) throw new Error("Error using context");
     const { isFirstRender } = context;
 
-    // TEXT CONTENT
-    const messages: any[] = [
+    // TEXT CONTENT TO SHOW
+    const messages: Array<{ [key: string]: string }> = [
         {
             title: "Greetings, Young Learner!",
             text: `Here you may practise your language skills.<br />

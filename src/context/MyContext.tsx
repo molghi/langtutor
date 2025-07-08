@@ -28,6 +28,9 @@ interface ContextTypes {
     lastPracticed: number;
     setLastPracticed: React.Dispatch<React.SetStateAction<number>>;
     localStorageLastPractised: string;
+    sessionsToday: number;
+    setSessionsToday: React.Dispatch<React.SetStateAction<number>>;
+    localStorageSessionsToday: string;
 }
 
 const MyContext = createContext<ContextTypes | undefined>(undefined);
@@ -40,23 +43,25 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
     const localStorageKey: string = "langtutor_user_words";
     const localStorageAccentColorKey: string = "langtutor_accent_color";
     const localStorageLastPractised: string = "langtutor_last_practised";
+    const localStorageSessionsToday: string = "langtutor_sessions_today";
 
     const lastPractisedFromLS = localStorage.getItem(localStorageLastPractised);
-
+    const sessionsTodayFromLS = localStorage.getItem(localStorageSessionsToday);
     const wordsFromLS = localStorage.getItem(localStorageKey);
 
-    const [showLangInfo, setShowLangInfo] = useState<string | null>(null);
-    const [uiMessage, setUiMessage] = useState<string>("");
-    const [words, setWords] = useState<any[]>(JSON.parse(wordsFromLS || "[]"));
-    const [langInPractice, setLangInPractice] = useState<string>("");
-    const [currentQuizData, setCurrentQuizData] = useState<any[]>([]);
-    const [currentQuizCounter, setCurrentQuizCounter] = useState<number>(0);
-    const [answers, setAnswers] = useState<string[]>([]);
-    const [isFinished, setIsFinished] = useState<boolean>(false);
-    const [selectedMode, setSelectedMode] = useState<string>("");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
-    const [lastPracticed, setLastPracticed] = useState<number>(lastPractisedFromLS ? +lastPractisedFromLS : -1);
+    const [showLangInfo, setShowLangInfo] = useState<string | null>(null); // popup content in Select Languages
+    const [uiMessage, setUiMessage] = useState<string>(""); // for UI msg
+    const [words, setWords] = useState<any[]>(JSON.parse(wordsFromLS || "[]")); // all user words
+    const [langInPractice, setLangInPractice] = useState<string>(""); // what language practising
+    const [currentQuizData, setCurrentQuizData] = useState<any[]>([]); // array of current quiz data
+    const [currentQuizCounter, setCurrentQuizCounter] = useState<number>(0); // current quiz counter
+    const [answers, setAnswers] = useState<string[]>([]); // array of user answers
+    const [isFinished, setIsFinished] = useState<boolean>(false); // is quiz finished?
+    const [selectedMode, setSelectedMode] = useState<string>(""); // one of the 3 modes available
+    const [isLoading, setIsLoading] = useState<boolean>(false); // for loading spinner
+    const [isFirstRender, setIsFirstRender] = useState<boolean>(true); // for Welcome component to show greeting screen upon page load
+    const [lastPracticed, setLastPracticed] = useState<number>(lastPractisedFromLS ? +lastPractisedFromLS : -1); // timestamp when last practised
+    const [sessionsToday, setSessionsToday] = useState<number>(sessionsTodayFromLS ? +sessionsTodayFromLS : 0); // how many sessions played today
 
     return (
         <MyContext.Provider
@@ -88,6 +93,9 @@ export const ContextProvider = ({ children }: ContextProviderProps) => {
                 lastPracticed,
                 setLastPracticed,
                 localStorageLastPractised,
+                sessionsToday,
+                setSessionsToday,
+                localStorageSessionsToday,
             }}
         >
             {children}

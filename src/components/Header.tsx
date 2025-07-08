@@ -1,5 +1,4 @@
 import { styled } from "../../stitches.config";
-import { NavLink, Link } from "react-router-dom";
 import { Container } from "./styled/Container";
 import MyContext from "../context/MyContext";
 import { useContext } from "react";
@@ -50,8 +49,6 @@ const StyledHeader = styled("div", {
             fontSize: "3rem",
         },
     },
-
-    
 });
 
 // MARKUP
@@ -62,13 +59,15 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const redirect = (to: string) => {
+    // Redirect to
+    const redirect = (to: string): void => {
         if (currentQuizData.length > 0) {
+            // Prompt first
             const answer = confirm(`You are in the middle of a practice session.\nAre you sure you want to exit?`);
             if (!answer) return;
-            setCurrentQuizData([]);
-            setCurrentQuizCounter(0);
-            setAnswers([]);
+            setCurrentQuizData([]); // Reset
+            setCurrentQuizCounter(0); // Reset
+            setAnswers([]); // Reset
             navigate(to);
         } else {
             navigate(to);

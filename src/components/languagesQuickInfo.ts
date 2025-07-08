@@ -1,7 +1,7 @@
 // TEXT THAT IS SHOWN IN HOVER-ACTIVATED POP-UP -- QUICK LANG INFO
 
 const languagesQuickInfo = (langCode: string): any => {
-    const langs: any = {
+    const langs: { [key: string]: {} } = {
         en: {
             speakers: "Approximately 1.5 billion.",
             countries: "United States, United Kingdom, Canada, Australia.",
@@ -198,7 +198,7 @@ const languagesQuickInfo = (langCode: string): any => {
         },
     };
 
-    if (!Object.keys(langs).includes(langCode)) return null;
+    if (!Object.keys(langs).includes(langCode)) return null; // if doesn't include, return null
     else return langs[langCode];
 };
 

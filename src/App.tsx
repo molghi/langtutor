@@ -16,6 +16,7 @@ import Footer from "./components/Footer";
 import NotFound from "./components/NotFound";
 import Again from "./components/Again";
 
+// Apply global styles
 globalStyles();
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
     const { uiMessage, setUiMessage, localStorageAccentColorKey, setWords, localStorageKey, langInPractice } = context;
 
     useEffect(() => {
-        // Hide Notification after 5 sec
+        // Hide Notification after X amount of sec
         if (uiMessage !== "") {
             const msgReset = () => setUiMessage("");
             const time = uiMessage.split(" ")[0] === "success" ? 6000 : 12000;
@@ -52,6 +53,7 @@ function App() {
 
     return (
         <>
+            {/* REACT ROUTER */}
             <BrowserRouter>
                 <div className="app">
                     <Header />

@@ -94,7 +94,7 @@ const AddMany = () => {
     const [fieldValue, setFieldValue] = useState<string>("");
 
     // ON FORM SUBMIT
-    const formManyWordsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const formManyWordsSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         addManyWords(fieldValue, setUiMessage, words, setWords, localStorageKey, setFieldValue);
     };

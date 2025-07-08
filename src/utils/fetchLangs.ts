@@ -11,8 +11,11 @@ async function fetchLangs() {
         };
 
         const res = await fetch("https://api-b2b.backenster.com/b1/api/v3/getLanguages?platform=api&code=en_GB", options);
+
         if (!res.ok) throw new Error("💥💥💥 Something failed...");
+
         const data = await res.json();
+
         return data;
     } catch (error) {
         console.error(error);

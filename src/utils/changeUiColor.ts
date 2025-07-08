@@ -1,5 +1,4 @@
-import { theme } from "../../stitches.config";
-
+// dependency function
 function checkNewColor(newColor: string): string {
     // mimick DOM addition to get the computed color
     const span = document.createElement("span");
@@ -13,10 +12,14 @@ function checkNewColor(newColor: string): string {
         .split(",")
         .map((x) => +x.trim()); // just the rgb values (r,g,b)
 
-    if (rgbValues[0] < 40 && rgbValues[1] < 40 && rgbValues[2] < 40) return `rgb(0, 128, 0)`; // return green if it is too dark
+    const threshold: number[] = [40, 40, 40];
+
+    if (rgbValues[0] < threshold[0] && rgbValues[1] < threshold[1] && rgbValues[2] < threshold[2]) return `rgb(0, 128, 0)`; // return green if it is too dark
 
     return color;
 }
+
+// ================================================================================================
 
 function changeUiColor(localStorageAccentColorKey: string): void {
     // Prompt
@@ -36,5 +39,7 @@ function changeUiColor(localStorageAccentColorKey: string): void {
     // Change in LS
     localStorage.setItem(localStorageAccentColorKey, safeColor);
 }
+
+// ================================================================================================
 
 export default changeUiColor;

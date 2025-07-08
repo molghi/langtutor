@@ -105,7 +105,7 @@ const Round = ({ roundData, rounds }: RoundTypes) => {
 
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { currentQuizCounter, setCurrentQuizCounter, answers, setAnswers, setIsFinished, langInPractice } = context;
+    const { currentQuizCounter, setCurrentQuizCounter, setAnswers, setIsFinished, langInPractice } = context;
 
     const inputRef = useRef<HTMLInputElement>(null);
     const btnRef = useRef<HTMLAnchorElement>(null);
@@ -128,23 +128,19 @@ const Round = ({ roundData, rounds }: RoundTypes) => {
     }, [roundData, currentQuizCounter]);
 
     // UPON CLICKING THE ACTION BTN
-    const actionBtnClick = (isLastRound: boolean) => {
+    const actionBtnClick = (isLastRound: boolean): void => {
         if (!inputValue) return setInputMsg("Please fill in the field!");
         setInputMsg("");
-        setCurrentQuizCounter((prev: number) => prev + 1);
-        setAnswers((prev: any[]) => [...prev, inputValue]);
-        if (isLastRound) {
-            setIsFinished(true);
-        }
+        setCurrentQuizCounter((prev: number) => prev + 1); // Increment round counter
+        setAnswers((prev: any[]) => [...prev, inputValue]); // Record current answer
+        if (isLastRound) setIsFinished(true);
     };
 
     // UPON FORM SUBMIT
-    const formSubmit = (e: React.FormEvent<HTMLFormElement>, isLastRound: boolean) => {
+    const formSubmit = (e: React.FormEvent<HTMLFormElement>, isLastRound: boolean): void => {
         e.preventDefault();
         btnRef.current && btnRef.current.click();
     };
-
-    // console.log(answers);
 
     return (
         <Container>
@@ -210,7 +206,7 @@ const Round = ({ roundData, rounds }: RoundTypes) => {
                     </form>
                 </div>
 
-                {/* BOTTOM ACTION BUTTON */}
+                {/* BOTTOM ACTION BUTTON: EITHER 'NEXT ROUND' OR 'FINISH' */}
                 <div className="btn-box">
                     <Link
                         ref={btnRef}

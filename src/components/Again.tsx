@@ -30,24 +30,29 @@ const Again = () => {
 
     const navigate = useNavigate();
 
-    const goTo = (path: string) => {
+    const goTo = (path: string): void => {
+        // Navigate to
         setIsFinished(false);
         navigate(path);
     };
 
     useEffect(() => {
+        // Reset answers
         if (!isFinished) setAnswers([]);
     }, [isFinished]);
+
+    const langPractised: string = langInPractice.split(" ")[1].toLowerCase();
 
     return (
         <Container>
             <StyledAgain>
                 <div className="page-title">Review submitted! Another session?</div>
+
                 <div className="btns">
                     <Link
-                        to={`/practise/your-words/${langInPractice.split(" ")[1].toLowerCase()}`}
+                        to={`/practise/your-words/${langPractised}`}
                         className="button"
-                        onClick={() => goTo(`/practise/your-words/${langInPractice.split(" ")[1].toLowerCase()}`)}
+                        onClick={() => goTo(`/practise/your-words/${langPractised}`)}
                     >
                         Yes
                     </Link>

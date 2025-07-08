@@ -172,10 +172,11 @@ const StyledSelectLanguage = styled("div", {
     },
 });
 
+// Get random number
 const getRandomNum = (upperLimit: number): number => Math.floor(Math.random() * upperLimit);
 
 // LANG OPTIONS
-const flagOptions = {
+const flagOptions: { [key: string]: string[] } = {
     English: ["🇬🇧", "🇺🇸", "🇨🇦", "🇦🇺"],
     Spanish: ["🇪🇸", "🇲🇽", "🇦🇷", "🇨🇴", "🇨🇱"],
     French: ["🇫🇷", "🇨🇦", "🇨🇭", "🇧🇪"],
@@ -183,7 +184,7 @@ const flagOptions = {
     Portuguese: ["🇧🇷", "🇵🇹"],
     German: ["🇩🇪", "🇦🇹", "🇨🇭"],
 };
-const langs = [
+const langs: Array<{ [key: string]: string }> = [
     { langCode: "en", langFlag: flagOptions["English"][getRandomNum(flagOptions["English"].length)], langName: "English" },
     { langCode: "zh", langFlag: "🇨🇳", langName: "Chinese" },
     { langCode: "hi", langFlag: "🇮🇳", langName: "Hindi" },
@@ -222,21 +223,10 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
 
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const {
-        showLangInfo,
-        setShowLangInfo,
-        words,
-        setWords,
-        setLangInPractice,
-        setCurrentQuizCounter,
-        isLoading,
-        langInPractice,
-    } = context;
+    const { showLangInfo, setShowLangInfo, words, setWords, setLangInPractice, setCurrentQuizCounter, isLoading } = context;
 
     const [langChoice, setLangChoice] = useState<string>("");
     const [languages, setLanguages] = useState<any[]>([]);
-
-    // console.log(langChoice);
 
     useEffect(() => {
         // REDUCE LANG OPTIONS IF REVIEWING YOUR WORDS
@@ -249,7 +239,7 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
         }
     }, []);
 
-    const nowPath = location.pathname.split("/").slice(-1).join();
+    const nowPath: string = location.pathname.split("/").slice(-1).join();
 
     // POPUP ELEMENT
     const popupElement = showLangInfo ? (
@@ -269,7 +259,7 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
     let content = null;
 
     // SHOW LANG OPTIONS
-    if (languages.length > 0)
+    if (languages.length > 0) {
         content = (
             <div className="box">
                 {/* RENDER LANG ELEMENTS */}
@@ -324,20 +314,25 @@ const SelectLanguage = ({ scenario }: { scenario: string }) => {
                 </div>
             </div>
         );
+    }
 
     // SHOW THERE IS NOTHING TO PRACTICE WITH
-    if (languages.length === 0 && scenario === "your-words")
+    if (languages.length === 0 && scenario === "your-words") {
         content = <div className="message">Nothing here yet because you haven't added any words to practise.</div>;
+    }
 
     return (
         <Container data-name="Select Language">
             <StyledSelectLanguage>
-                {/* TITLE */}
+                {/* SMALL TITLE */}
                 <div className="small-title">{scenario === "your-words" ? "Your Words" : "Online Session"}</div>
+
+                {/* BIG TITLE */}
                 <div className="page-title" style={{ marginBottom: "3rem" }}>
                     Select Language
                 </div>
 
+                {/* CONTENT */}
                 {content}
 
                 {/* HOVER-ACTIVATED POP-UP */}

@@ -90,8 +90,8 @@ const StyledSelectMode = styled("div", {
     },
 });
 
-// MODE OPTIONS
-const options = [
+// MODE OPTIONS TO SHOW
+const options: Array<{ [key: string]: any }> = [
     { name: "Review Your Words", active: true, explainer: "— For practising words you have previously interacted with" },
     { name: "New Online Session", active: true, explainer: "— For starting a fresh practice session with online content" },
     {
@@ -105,11 +105,11 @@ const options = [
 const SelectMode = () => {
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { setSelectedMode, isLoading } = context;
+    const { setSelectedMode } = context;
 
     const [modeChoice, setModeChoice] = useState<number>(-1);
 
-    const changeMode = (i: number) => {
+    const changeMode = (i: number): void => {
         setModeChoice(i);
         setSelectedMode(options[i].name.toLowerCase().replaceAll(" ", "-"));
     };

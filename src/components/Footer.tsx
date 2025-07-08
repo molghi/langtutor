@@ -13,20 +13,19 @@ const StyledFooter = styled("div", {
     fontSize: "1.4rem",
     transition: "all 0.1s",
     color: "$accent",
+
     "&:hover": {
         opacity: 1,
     },
 });
 
-// DATA TO BE SHOWN
-const sessions = 1;
-
 // MARKUP
 const Footer = () => {
     const context = useContext(MyContext);
     if (!context) throw new Error("Error using context");
-    const { lastPracticed } = context;
+    const { lastPracticed, sessionsToday } = context;
 
+    // Get when practised last time
     const getWhen = (timestamp: number): string => {
         if (timestamp === 0) return "...";
         const now: number = Date.now();
@@ -34,6 +33,7 @@ const Footer = () => {
         const inMunites: number = Math.round(difference / 1000 / 60);
         const inHours: number = Math.round(difference / 1000 / 60 / 60);
         let result: string = "";
+        // Cases
         if (inMunites < 60) {
             if (inMunites === 0) result = `Just now`;
             if (inMunites === 1) result = `1 minute ago`;
@@ -54,7 +54,8 @@ const Footer = () => {
         <Container data-name="Footer-Container" css={{ height: "initial" }}>
             <StyledFooter data-name="Footer">
                 <span>Last practised: {lastPracticed === -1 ? "Never" : getWhen(lastPracticed)}</span>
-                {/* {lastPracticed !== 0 && <span>Sessions today: {sessions}</span>} */}
+
+                {lastPracticed !== 0 && sessionsToday !== 0 && <span>Sessions today: {sessionsToday}</span>}
             </StyledFooter>
         </Container>
     );

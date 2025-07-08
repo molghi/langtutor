@@ -2,6 +2,7 @@
 
 async function fetchTranslation(word: string, langCode: string) {
     if (!word) return "";
+
     try {
         const options = {
             method: "POST",
@@ -14,8 +15,11 @@ async function fetchTranslation(word: string, langCode: string) {
         };
 
         const res = await fetch("https://api-b2b.backenster.com/b1/api/v3/translate", options);
+
         if (!res.ok) throw new Error(`💥💥💥 Something failed... Word: ${word}. LangCode: ${langCode}`);
+
         const data = await res.json();
+
         return data;
     } catch (error) {
         console.error(error);
